@@ -10,6 +10,7 @@ import { LayoutPageComponent } from './pages/layout-page/layout-page.component';
 import { ListPageComponent } from './pages/list-page/list-page.component';
 import { NewPageComponent } from './pages/new-page/new-page.component';
 import { CardComponent } from './components/card/card.component';
+import { HeroimagePipe } from './pipes/heroimage.pipe';
 
 
 
@@ -21,7 +22,10 @@ import { CardComponent } from './components/card/card.component';
     ListPageComponent,
     NewPageComponent,
     SearchPageComponent,
-    CardComponent
+    CardComponent,
+
+    // Pipes
+    HeroimagePipe
   ],
   imports: [
     CommonModule,
