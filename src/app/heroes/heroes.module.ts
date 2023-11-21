@@ -11,6 +11,7 @@ import { ListPageComponent } from './pages/list-page/list-page.component';
 import { NewPageComponent } from './pages/new-page/new-page.component';
 import { CardComponent } from './components/card/card.component';
 import { HeroimagePipe } from './pipes/heroimage.pipe';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -29,8 +30,9 @@ import { HeroimagePipe } from './pipes/heroimage.pipe';
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     HeroesRoutingModule, 
-    MaterialModule
+    MaterialModule,
   ]
 })
 export class HeroesModule { }
