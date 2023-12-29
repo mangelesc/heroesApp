@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Hero, Publisher } from '../../interfaces/hero.interface';
 import { HeroesService } from '../../services/heroes.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-new-page',
@@ -9,7 +12,7 @@ import { HeroesService } from '../../services/heroes.service';
   styles: [
   ]
 })
-export class NewPageComponent {
+export class NewPageComponent implements OnInit{
 
 
   // Formulario reactivo
@@ -27,18 +30,49 @@ export class NewPageComponent {
     alt_img:    new FormControl(''),
   });
 
+  
   public publishers = [
     {id: 'DC Comics', desc:'CD - Comics'}, 
     {id: 'Marvel Comics', desc:'Marvel - Comics'}
   ];
 
-  constructor( private HeroesService: HeroesService ) {}
+  
+  constructor( 
+    private HeroesService: HeroesService, 
+    private activatedRoute: ActivatedRoute, 
+    private router: Router,
+    private snackbar: MatSnackBar
+  ) {}
 
+  
   get currentHero():Hero {
     const hero = this.heroForm.value as Hero; 
 
     return hero;
   }
+
+
+  ngOnInit(): void {
+    
+    if( !this.router.url.includes('edit')) return; 
+
+    this.activatedRoute.params
+      .pipe(
+        switchMap( ({id}) => this.HeroesService.getHeroById( id ) )
+      ) .subscribe ( hero => {
+
+        if ( !hero ) return this.router.navigateByUrl('/');
+
+        // reset -> reestablece el formulario
+        // SI le mandamos un argumento, estable los campos cuyos nombres coincidan
+        this.heroForm.reset( hero )
+        return; 
+
+      });
+
+  }
+
+
 
   onSubmit():void {
     // console.log({
@@ -53,7 +87,8 @@ export class NewPageComponent {
       // Al ser un observable me tengo que suscribir, sino NO se dispara
       this.HeroesService.updateHero( this.currentHero )
         .subscribe( hero => {
-
+          this.router.navigate(['/heroes/edit', hero.id]);
+          this.showSnakBar(`${ hero.superhero } ha sido actualizado correctamente`);
         } )
       return;
     }
@@ -63,6 +98,13 @@ export class NewPageComponent {
 
       } )
     // this.HeroesService.updateHero( this.heroForm.value );
+
+  }
+
+  showSnakBar(message: string): void {
+    this.snackbar.open( message, 'Done', {
+      duration: 2500,
+    })
 
   }
 
