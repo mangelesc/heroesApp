@@ -1,10 +1,15 @@
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { Hero, Publisher } from '../../interfaces/hero.interface';
 import { HeroesService } from '../../services/heroes.service';
-import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+
 
 @Component({
   selector: 'app-new-page',
@@ -16,9 +21,7 @@ export class NewPageComponent implements OnInit{
 
 
   // Formulario reactivo
-
   // Cada elemento de nuestro formulario tiene que estár contenido dentro de un elemento html padre
-
   // El valor entre () es el valor inicial. 
   heroForm = new FormGroup({
     id:         new FormControl<string>(''),
@@ -41,7 +44,8 @@ export class NewPageComponent implements OnInit{
     private HeroesService: HeroesService, 
     private activatedRoute: ActivatedRoute, 
     private router: Router,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar, 
+    private dialog: MatDialog,
   ) {}
 
   
@@ -99,6 +103,21 @@ export class NewPageComponent implements OnInit{
       } )
     // this.HeroesService.updateHero( this.heroForm.value );
 
+  }
+
+  onDeleteHero() {
+    if ( !this.currentHero.id) throw Error('Hero id is required');
+
+    const dialogRef = this.dialog.open( ConfirmDialogComponent, {
+      data: this.heroForm.value,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      console.log(result);
+    });
+    
+    
   }
 
   showSnakBar(message: string): void {
