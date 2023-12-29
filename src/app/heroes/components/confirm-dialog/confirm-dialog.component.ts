@@ -12,6 +12,7 @@ export class ConfirmDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
+    // Inyección manual de un servicio
     @Inject(MAT_DIALOG_DATA) public data: Hero,
   ) {}
 

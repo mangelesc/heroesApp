@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Hero, Publisher } from '../../interfaces/hero.interface';
 import { HeroesService } from '../../services/heroes.service';
-import { switchMap } from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 
@@ -112,12 +112,31 @@ export class NewPageComponent implements OnInit{
       data: this.heroForm.value,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      console.log(result);
-    });
+    // dialogRef.afterClosed().subscribe(result => {
+    //   if ( !result ) return;
+
+    //   this.HeroesService.deleteHero( this.currentHero )
+    //   // Necesito suscribirme porque es un observable
+    //     .subscribe ( wasDeleted => {
+    //       if (wasDeleted) {
+    //         this.router.navigate(['/heroes']);
+    //       }
+    //     } );
+    // });
     
-    
+    // Refactorizamos el codigo anterior: 
+
+    dialogRef.afterClosed()
+      .pipe(
+        // Filter: Si la condición se cumple deja pasar, sino sale. Si result es true, pasa
+        filter( (result: boolean) => result ),
+        switchMap( () => this.HeroesService.deleteHero( this.currentHero )),
+        filter( (wasDeleted: boolean) => wasDeleted ),
+      )
+      .subscribe(() => {
+        this.router.navigate(['/heroes']);
+      });
+        
   }
 
   showSnakBar(message: string): void {

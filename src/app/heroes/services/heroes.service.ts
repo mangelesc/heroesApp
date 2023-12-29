@@ -53,10 +53,11 @@ export class HeroesService {
     // Emite un objeto vacio o un error si no exite ()
     return this.http.delete(`${ this.baseUrl }/heroes/${ hero.id }`)
       .pipe(
+        // Si no ha saltado el error, transformo la respuesta con un map a true 
+        map( resp => true ),
         // Si hay un error, el recurso ya no existe, por lo que devolvemos false
         catchError( err => of(false)),
-        // Si no ha saltado el error, transformo la respuesta con un map a true 
-        map( resp => true )
+        
       )
   }
 
